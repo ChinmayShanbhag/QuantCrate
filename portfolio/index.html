@@ -1,0 +1,1717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QuantCrate — Portfolio Showcase</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-bash.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+<style>
+:root {
+  --bg-primary: #0a0e17;
+  --bg-secondary: #111827;
+  --bg-card: #151d2e;
+  --bg-card-hover: #1a2540;
+  --accent: #22d3ee;
+  --accent-dim: #0e7490;
+  --accent-glow: rgba(34, 211, 238, 0.15);
+  --green: #34d399;
+  --green-dim: rgba(52, 211, 153, 0.15);
+  --red: #f87171;
+  --red-dim: rgba(248, 113, 113, 0.15);
+  --amber: #fbbf24;
+  --amber-dim: rgba(251, 191, 36, 0.15);
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --border: #1e293b;
+  --border-accent: #22d3ee33;
+  --font-display: 'DM Serif Display', serif;
+  --font-body: 'Outfit', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9999;
+}
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-primary); }
+::-webkit-scrollbar-thumb { background: var(--accent-dim); border-radius: 3px; }
+
+/* ─── NAV ─── */
+.nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  padding: 0.75rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(10, 14, 23, 0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.3s;
+}
+
+.nav.scrolled { border-bottom-color: var(--border); }
+
+.nav-logo {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--accent);
+}
+
+.nav-links {
+  display: flex;
+  gap: 1.5rem;
+  list-style: none;
+}
+
+.nav-links a {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.82rem;
+  font-weight: 400;
+  transition: color 0.2s;
+}
+
+.nav-links a:hover { color: var(--accent); }
+
+@media (max-width: 600px) {
+  .nav-links { gap: 0.75rem; }
+  .nav-links a { font-size: 0.72rem; }
+}
+
+/* ─── HERO ─── */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+  top: 20%; left: 50%; transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 1rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-accent);
+  border-radius: 100px;
+  font-size: 0.8rem;
+  color: var(--accent);
+  font-family: var(--font-mono);
+  margin-bottom: 2rem;
+  opacity: 0;
+  animation: fadeUp 0.6s ease forwards 0.2s;
+}
+
+.hero-badge .dot {
+  width: 6px; height: 6px;
+  background: var(--green);
+  border-radius: 50%;
+  animation: pulse 2s ease infinite;
+}
+
+.hero h1 {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 6vw, 5rem);
+  line-height: 1.1;
+  margin-bottom: 0.5rem;
+  opacity: 0;
+  animation: fadeUp 0.6s ease forwards 0.4s;
+}
+
+.hero h1 .accent { color: var(--accent); }
+
+.hero .subtitle {
+  font-size: clamp(1rem, 2vw, 1.35rem);
+  color: var(--text-secondary);
+  font-weight: 300;
+  max-width: 600px;
+  margin-bottom: 2.5rem;
+  opacity: 0;
+  animation: fadeUp 0.6s ease forwards 0.6s;
+}
+
+.hero-cta {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  opacity: 0;
+  animation: fadeUp 0.6s ease forwards 0.8s;
+}
+
+.btn {
+  padding: 0.75rem 1.75rem;
+  border-radius: 8px;
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  border: none;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: var(--bg-primary);
+}
+.btn-primary:hover { background: #67e8f9; transform: translateY(-2px); box-shadow: 0 8px 30px var(--accent-glow); }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+}
+.btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+.hero-stats {
+  display: flex;
+  gap: 3rem;
+  margin-top: 4rem;
+  opacity: 0;
+  animation: fadeUp 0.6s ease forwards 1s;
+}
+
+.hero-stat .number {
+  font-family: var(--font-mono);
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.hero-stat .label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+/* ─── SECTION ─── */
+section {
+  padding: 5rem 2rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.section-label {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  margin-bottom: 0.75rem;
+}
+
+.section-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+  margin-bottom: 1rem;
+}
+
+.section-desc {
+  color: var(--text-secondary);
+  max-width: 650px;
+  margin-bottom: 3rem;
+  font-weight: 300;
+}
+
+/* ─── PROBLEM / SOLUTION ─── */
+.problem-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+@media (max-width: 700px) { .problem-grid { grid-template-columns: 1fr; } }
+
+.problem-card, .solution-card {
+  padding: 1.5rem;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  transition: all 0.3s ease;
+}
+
+.problem-card {
+  background: linear-gradient(135deg, rgba(248,113,113,0.05), transparent);
+  border-color: rgba(248,113,113,0.15);
+}
+
+.solution-card {
+  background: linear-gradient(135deg, rgba(34,211,238,0.05), transparent);
+  border-color: var(--border-accent);
+}
+
+.problem-card:hover, .solution-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+}
+
+.card-icon {
+  width: 36px; height: 36px;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+}
+
+.problem-card .card-icon { background: var(--red-dim); }
+.solution-card .card-icon { background: var(--accent-glow); }
+
+.card-title {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+}
+
+.card-text {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  font-weight: 300;
+}
+
+/* ─── ARCHITECTURE ─── */
+.arch-container {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 2.5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.arch-container::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+}
+
+.arch-flow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  flex-wrap: wrap;
+  margin: 2rem 0;
+}
+
+.arch-node {
+  padding: 1rem 1.5rem;
+  border-radius: 10px;
+  text-align: center;
+  min-width: 130px;
+  transition: all 0.3s ease;
+  cursor: default;
+  position: relative;
+}
+
+.arch-node:hover {
+  transform: scale(1.05);
+  z-index: 2;
+}
+
+.arch-node.input {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+}
+
+.arch-node.process {
+  background: linear-gradient(135deg, var(--accent-dim), #155e75);
+  border: 1px solid var(--accent);
+  box-shadow: 0 0 30px var(--accent-glow);
+}
+
+.arch-node.output {
+  background: linear-gradient(135deg, rgba(52,211,153,0.2), rgba(52,211,153,0.05));
+  border: 1px solid rgba(52,211,153,0.4);
+}
+
+.arch-node .node-label {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.arch-node .node-sub {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  margin-top: 0.25rem;
+}
+
+.arch-arrow {
+  font-size: 1.2rem;
+  color: var(--text-muted);
+  padding: 0 0.5rem;
+  flex-shrink: 0;
+}
+
+/* ─── DEMO ─── */
+.demo-container {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.demo-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+}
+
+.demo-tab {
+  padding: 1rem 1.5rem;
+  font-size: 0.85rem;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+  cursor: pointer;
+  border: none;
+  background: none;
+  white-space: nowrap;
+  transition: all 0.2s;
+  border-bottom: 2px solid transparent;
+}
+
+.demo-tab:hover { color: var(--text-secondary); }
+.demo-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+.demo-panel {
+  display: none;
+  padding: 2rem;
+}
+
+.demo-panel.active { display: block; }
+
+.demo-panel pre[class*="language-"] {
+  background: var(--bg-primary) !important;
+  border-radius: 10px;
+  padding: 1.5rem !important;
+  margin: 1rem 0 !important;
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  font-size: 0.82rem !important;
+  line-height: 1.7 !important;
+}
+
+.demo-panel pre code {
+  font-family: var(--font-mono) !important;
+  font-size: 0.82rem !important;
+}
+
+.demo-output {
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.25rem;
+  margin-top: 1rem;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--green);
+  white-space: pre-wrap;
+  position: relative;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.demo-output::before {
+  content: 'OUTPUT';
+  position: absolute;
+  top: -0.6rem; left: 1rem;
+  background: var(--bg-primary);
+  padding: 0 0.5rem;
+  font-size: 0.6rem;
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+}
+
+.run-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1.25rem;
+  background: var(--accent);
+  color: var(--bg-primary);
+  border: none;
+  border-radius: 6px;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 1rem;
+}
+
+.run-btn:hover { background: #67e8f9; transform: translateY(-1px); }
+.run-btn.running { opacity: 0.6; pointer-events: none; }
+
+/* ─── AUDITOR ─── */
+.audit-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(185px, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.audit-check {
+  padding: 1.25rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.audit-check::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--text-muted);
+  transition: background 0.3s;
+}
+
+.audit-check:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+}
+
+.audit-check.error-level::before { background: var(--red); }
+.audit-check.warn-level::before { background: var(--amber); }
+
+.audit-check .check-name {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-weight: 500;
+  margin-bottom: 0.4rem;
+}
+
+.audit-check .check-desc {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.audit-check .check-severity {
+  margin-top: 0.75rem;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.audit-check.error-level .check-severity { color: var(--red); }
+.audit-check.warn-level .check-severity { color: var(--amber); }
+
+.audit-detail {
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.5rem;
+  margin-top: 1rem;
+  display: none;
+}
+
+.audit-detail.visible { display: block; animation: fadeUp 0.3s ease; }
+
+.audit-detail h4 {
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  margin-bottom: 0.75rem;
+  color: var(--accent);
+}
+
+.audit-detail p {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+.audit-detail code {
+  font-family: var(--font-mono);
+  background: var(--bg-card);
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  color: var(--accent);
+}
+
+/* ─── COMPARISON TABLE ─── */
+.comparison-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  font-size: 0.88rem;
+}
+
+.comparison-table th {
+  background: var(--bg-card);
+  padding: 1rem 1.25rem;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border);
+}
+
+.comparison-table th:first-child { color: var(--text-primary); }
+.comparison-table th:nth-child(2) { color: var(--red); }
+.comparison-table th:nth-child(3) { color: var(--accent); }
+
+.comparison-table td {
+  padding: 0.85rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-secondary);
+}
+
+.comparison-table tr:last-child td { border-bottom: none; }
+.comparison-table tr:hover td { background: var(--bg-card); }
+
+.comparison-table .check { color: var(--green); font-weight: 600; }
+.comparison-table .cross { color: var(--red); opacity: 0.6; }
+.comparison-table .same { color: var(--text-muted); }
+
+/* ─── ENCODING ─── */
+.encoding-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.25rem;
+}
+
+.encoding-card {
+  padding: 1.5rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  transition: all 0.3s;
+}
+
+.encoding-card:hover { border-color: var(--accent); }
+
+.encoding-card .col-name {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--accent);
+  margin-bottom: 0.5rem;
+}
+
+.encoding-card .encoding-name {
+  font-weight: 600;
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.encoding-card .encoding-why {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+/* ─── CHART ─── */
+.chart-wrapper {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+}
+
+.chart-wrapper canvas { max-height: 320px; }
+
+/* ─── TECH STACK ─── */
+.tech-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1rem;
+}
+
+.tech-item {
+  padding: 1.25rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  text-align: center;
+  transition: all 0.3s;
+}
+
+.tech-item:hover {
+  border-color: var(--accent);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+}
+
+.tech-item .tech-name {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 0.3rem;
+}
+
+.tech-item .tech-role {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+/* ─── STRUCTURE ─── */
+.structure-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  line-height: 2;
+}
+
+/* ─── ANIMATIONS ─── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ─── DIVIDER ─── */
+.divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border), transparent);
+  margin: 0 auto;
+  max-width: 1100px;
+}
+
+/* ─── FOOTER ─── */
+.footer {
+  text-align: center;
+  padding: 3rem 2rem;
+  border-top: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+.footer a { color: var(--accent); text-decoration: none; }
+.footer a:hover { text-decoration: underline; }
+
+/* ─── OHLCV CHART ─── */
+.ohlcv-chart-section {
+  margin-top: 2rem;
+}
+
+.ohlcv-controls {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.ohlcv-btn {
+  padding: 0.4rem 1rem;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.ohlcv-btn:hover, .ohlcv-btn.active {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-glow);
+}
+
+/* ─── ADJUST VISUAL ─── */
+.adjust-visual {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+@media (max-width: 700px) { .adjust-visual { grid-template-columns: 1fr; } }
+
+.adjust-col {
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.25rem;
+}
+
+.adjust-col h4 {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  margin-bottom: 1rem;
+}
+
+.adjust-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.4rem 0;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.adjust-row:last-child { border-bottom: none; }
+.adjust-row .ts { color: var(--text-muted); }
+.adjust-row .val { color: var(--text-primary); }
+.adjust-row.changed .val { color: var(--amber); }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav" id="nav">
+  <div class="nav-logo">.qcr</div>
+  <ul class="nav-links">
+    <li><a href="#problem">Problem</a></li>
+    <li><a href="#architecture">Architecture</a></li>
+    <li><a href="#demo">Demo</a></li>
+    <li><a href="#auditor">Auditor</a></li>
+    <li><a href="#compare">Compare</a></li>
+    <li><a href="#tech">Stack</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge"><span class="dot"></span> v0.1.0 — Open Source</div>
+  <h1>Quant<span class="accent">Crate</span></h1>
+  <p class="subtitle">The SQLite of Quant Finance — a zero-config, portable, high-performance binary container for financial time-series data.</p>
+  <div class="hero-cta">
+    <a href="#demo" class="btn btn-primary">Interactive Demo</a>
+    <a href="#architecture" class="btn btn-ghost">How It Works</a>
+  </div>
+  <div class="hero-stats">
+    <div class="hero-stat"><div class="number" data-target="146">0</div><div class="label">Tests Passing</div></div>
+    <div class="hero-stat"><div class="number" data-target="5">0</div><div class="label">Audit Checks</div></div>
+    <div class="hero-stat"><div class="number" data-target="0">0</div><div class="label">External DBs</div></div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- PROBLEM / SOLUTION -->
+<section id="problem">
+  <div class="reveal">
+    <div class="section-label">// The Problem</div>
+    <div class="section-title">Financial data deserves better than CSV in a ZIP</div>
+    <p class="section-desc">Traditional workflows with CSV and Parquet leave critical gaps that cause silent failures in backtesting pipelines.</p>
+  </div>
+  <div class="problem-grid reveal">
+    <div class="problem-card">
+      <div class="card-icon">&#x2717;</div>
+      <div class="card-title">No Standardized Metadata</div>
+      <div class="card-text">Every vendor uses different column names. You're guessing what "Vol" means and hoping the timezone is UTC.</div>
+    </div>
+    <div class="problem-card">
+      <div class="card-icon">&#x2717;</div>
+      <div class="card-title">No Quality Guarantees</div>
+      <div class="card-text">Ghost spikes, negative prices, duplicate timestamps — you discover them 3 months later when your backtest explodes.</div>
+    </div>
+    <div class="problem-card">
+      <div class="card-icon">&#x2717;</div>
+      <div class="card-title">No Audit Trail</div>
+      <div class="card-text">Was this data validated? When? By whom? There's no record. You just have to trust it.</div>
+    </div>
+    <div class="problem-card">
+      <div class="card-icon">&#x2717;</div>
+      <div class="card-title">No SQL Without a Database</div>
+      <div class="card-text">Want to filter by volume? Load the entire file into Pandas first, or spin up a database server.</div>
+    </div>
+  </div>
+
+  <div class="reveal">
+    <div class="section-label" style="color: var(--green)">// The Solution</div>
+    <div class="section-title">One file. Everything included.</div>
+  </div>
+  <div class="problem-grid reveal">
+    <div class="solution-card">
+      <div class="card-icon">&#x2713;</div>
+      <div class="card-title">Smart Metadata</div>
+      <div class="card-text">Ticker, exchange, timezone, timescale, asset class — all validated by Pydantic and embedded in the Arrow schema.</div>
+    </div>
+    <div class="solution-card">
+      <div class="card-icon">&#x2713;</div>
+      <div class="card-title">5 Automatic Audit Checks</div>
+      <div class="card-text">OHLC consistency, positive prices, chronological order, outlier detection (5σ), gap identification — all before sealing.</div>
+    </div>
+    <div class="solution-card">
+      <div class="card-icon">&#x2713;</div>
+      <div class="card-title">Sealed Audit Trail</div>
+      <div class="card-text">Every file records: passed/failed, timestamp, gap count, outlier count, auditor version. Fully reproducible.</div>
+    </div>
+    <div class="solution-card">
+      <div class="card-icon">&#x2713;</div>
+      <div class="card-title">SQL Over Files</div>
+      <div class="card-text">DuckDB reads .qcr files directly — no loading, no copying, no database server. Just SQL.</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ARCHITECTURE -->
+<section id="architecture">
+  <div class="reveal">
+    <div class="section-label">// Architecture</div>
+    <div class="section-title">Anatomy of a .qcr File</div>
+    <p class="section-desc">A .qcr file is a ZSTD-compressed Parquet file with embedded metadata in the Arrow schema. Here's the data flow:</p>
+  </div>
+
+  <div class="arch-container reveal">
+    <div style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); margin-bottom: 1.5rem;">DATA PIPELINE</div>
+    <div class="arch-flow">
+      <div class="arch-node input">
+        <div class="node-label">CSV / API</div>
+        <div class="node-sub">Raw OHLCV data</div>
+      </div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-node input">
+        <div class="node-label">Polars DF</div>
+        <div class="node-sub">Canonical schema</div>
+      </div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-node process">
+        <div class="node-label">Auditor</div>
+        <div class="node-sub">5 quality checks</div>
+      </div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-node process">
+        <div class="node-label">Sealer</div>
+        <div class="node-sub">Metadata + trail</div>
+      </div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-node output">
+        <div class="node-label">.qcr File</div>
+        <div class="node-sub">ZSTD Parquet</div>
+      </div>
+    </div>
+
+    <div style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); margin: 2rem 0 1rem;">FILE STRUCTURE</div>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+      <div style="padding: 1rem; background: var(--bg-primary); border-radius: 8px; border: 1px solid var(--border);">
+        <div style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--accent); margin-bottom: 0.5rem;">Header (Metadata)</div>
+        <div style="font-size: 0.75rem; color: var(--text-muted);">JSON in Arrow schema: ticker, exchange, timezone, timescale, asset class</div>
+      </div>
+      <div style="padding: 1rem; background: var(--bg-primary); border-radius: 8px; border: 1px solid var(--border);">
+        <div style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--green); margin-bottom: 0.5rem;">Audit Trail</div>
+        <div style="font-size: 0.75rem; color: var(--text-muted);">passed, timestamp, gaps, outliers, auditor version</div>
+      </div>
+      <div style="padding: 1rem; background: var(--bg-primary); border-radius: 8px; border: 1px solid var(--border);">
+        <div style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--amber); margin-bottom: 0.5rem;">Corporate Actions</div>
+        <div style="font-size: 0.75rem; color: var(--text-muted);">Splits, dividends — stored chronologically for on-the-fly adjustment</div>
+      </div>
+      <div style="padding: 1rem; background: var(--bg-primary); border-radius: 8px; border: 1px solid var(--border);">
+        <div style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-primary); margin-bottom: 0.5rem;">Payload (OHLCV)</div>
+        <div style="font-size: 0.75rem; color: var(--text-muted);">timestamp[ns,UTC], float32 OHLC, uint64 volume — columnar + sorted</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="reveal" style="margin-top: 3rem;">
+    <div class="section-label">// Encoding Strategy</div>
+    <div class="section-title">Why every byte matters</div>
+    <p class="section-desc">Each column uses a Parquet encoding chosen for its data characteristics — not generic defaults.</p>
+  </div>
+
+  <div class="encoding-grid reveal">
+    <div class="encoding-card">
+      <div class="col-name">timestamp</div>
+      <div class="encoding-name">DELTA_BINARY_PACKED</div>
+      <div class="encoding-why">Timestamps are monotonically increasing integers. Delta encoding stores only the tiny diffs between consecutive values — often just a single repeated interval.</div>
+    </div>
+    <div class="encoding-card">
+      <div class="col-name">open / high / low / close</div>
+      <div class="encoding-name">BYTE_STREAM_SPLIT</div>
+      <div class="encoding-why">Splits IEEE-754 float bytes into four homogeneous streams. The exponent bytes cluster together, the mantissa bytes cluster together — ZSTD compresses each stream dramatically better.</div>
+    </div>
+    <div class="encoding-card">
+      <div class="col-name">volume</div>
+      <div class="encoding-name">DELTA_BINARY_PACKED</div>
+      <div class="encoding-why">Integer volumes with gradual changes benefit from delta encoding. Consecutive volumes often differ by small amounts, so deltas are tiny.</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- INTERACTIVE DEMO -->
+<section id="demo">
+  <div class="reveal">
+    <div class="section-label">// Interactive Demo</div>
+    <div class="section-title">See it in action</div>
+    <p class="section-desc">Explore the core workflows — from packing data to querying it with SQL. Click "Simulate" to see realistic output.</p>
+  </div>
+
+  <div class="demo-container reveal">
+    <div class="demo-tabs">
+      <button class="demo-tab active" data-tab="seal">Seal a File</button>
+      <button class="demo-tab" data-tab="audit">Run Audit</button>
+      <button class="demo-tab" data-tab="adjust">Adjustments</button>
+      <button class="demo-tab" data-tab="sql">SQL Query</button>
+      <button class="demo-tab" data-tab="cli">CLI</button>
+    </div>
+
+    <div class="demo-panel active" id="panel-seal">
+      <h3 style="margin-bottom: 0.5rem;">Pack data with metadata and automatic audit</h3>
+      <p style="color: var(--text-secondary); font-size: 0.88rem; margin-bottom: 1rem;">Three lines to go from raw DataFrame to a sealed, validated .qcr file.</p>
+      <pre><code class="language-python">from qcr import save_sealed_qcr, run_audit
+from qcr.schema import QcrMetadata, AssetClass, Timescale
+
+metadata = QcrMetadata(
+    ticker="AAPL",
+    asset_class=AssetClass.EQUITY,
+    currency="USD",
+    exchange="XNAS",
+    timezone="America/New_York",
+    timescale=Timescale.ONE_DAY,
+)
+
+audit = run_audit(df, Timescale.ONE_DAY)
+save_sealed_qcr(df, metadata, audit.to_audit_trail(), "AAPL.qcr")</code></pre>
+      <button class="run-btn" onclick="simulateRun(this, 'seal')">&#9654; Simulate</button>
+      <div class="demo-output" id="output-seal" style="display:none;"></div>
+    </div>
+
+    <div class="demo-panel" id="panel-audit">
+      <h3 style="margin-bottom: 0.5rem;">The Financial Data Linter</h3>
+      <p style="color: var(--text-secondary); font-size: 0.88rem; margin-bottom: 1rem;">Inject bad data and watch the auditor catch every issue before it reaches your backtest.</p>
+      <pre><code class="language-python">from qcr.auditor import run_audit, Severity
+from qcr.schema import Timescale
+
+# Inject problems into the data
+df[100, "close"] = -5.0       # Negative price!
+df[50, "timestamp"] = df[49]  # Duplicate timestamp!
+df[200, "high"] = 1.0         # High < Low!
+
+result = run_audit(df, Timescale.ONE_MINUTE)
+for issue in result.issues:
+    print(f"[{issue.severity}] {issue.check}: {issue.message}")</code></pre>
+      <button class="run-btn" onclick="simulateRun(this, 'audit')">&#9654; Simulate</button>
+      <div class="demo-output" id="output-audit" style="display:none;"></div>
+    </div>
+
+    <div class="demo-panel" id="panel-adjust">
+      <h3 style="margin-bottom: 0.5rem;">Non-destructive Corporate Actions</h3>
+      <p style="color: var(--text-secondary); font-size: 0.88rem; margin-bottom: 1rem;">Raw data stays raw. Adjustments are applied on-the-fly — fully reproducible.</p>
+      <pre><code class="language-python">from qcr.adjust import adjust_ohlcv
+from qcr.schema import CorporateAction, ActionType
+
+split = CorporateAction(
+    action_type=ActionType.SPLIT,
+    effective_date=datetime(2022, 8, 31, tzinfo=timezone.utc),
+    value=4.0,
+    description="4-for-1 forward split",
+)
+
+adjusted = adjust_ohlcv(raw_df, [split])
+# Pre-split: prices / 4, volume * 4
+# Post-split: unchanged</code></pre>
+      <button class="run-btn" onclick="simulateRun(this, 'adjust')">&#9654; Simulate</button>
+      <div class="demo-output" id="output-adjust" style="display:none;"></div>
+
+      <div class="adjust-visual" id="adjust-visual" style="display:none;">
+        <div class="adjust-col">
+          <h4 style="color: var(--text-muted);">Raw Data</h4>
+          <div id="raw-rows"></div>
+        </div>
+        <div class="adjust-col">
+          <h4 style="color: var(--amber);">After 4:1 Split</h4>
+          <div id="adjusted-rows"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="demo-panel" id="panel-sql">
+      <h3 style="margin-bottom: 0.5rem;">SQL Over Files — No Database Required</h3>
+      <p style="color: var(--text-secondary); font-size: 0.88rem; margin-bottom: 1rem;">DuckDB reads .qcr files directly. Filter, aggregate, JOIN — all with standard SQL.</p>
+      <pre><code class="language-python">from qcr.vtable import query_qcr, query_qcr_df
+
+result = query_qcr("""
+    SELECT timestamp, close, volume
+    FROM 'AAPL.qcr'
+    WHERE close > 150 AND volume > 1000000
+    ORDER BY volume DESC
+    LIMIT 5
+""")
+
+# Cross-file JOIN
+result = query_qcr("""
+    SELECT a.timestamp, a.close AS aapl, b.close AS msft
+    FROM 'AAPL.qcr' a
+    JOIN 'MSFT.qcr' b ON a.timestamp = b.timestamp
+""")</code></pre>
+      <button class="run-btn" onclick="simulateRun(this, 'sql')">&#9654; Simulate</button>
+      <div class="demo-output" id="output-sql" style="display:none;"></div>
+    </div>
+
+    <div class="demo-panel" id="panel-cli">
+      <h3 style="margin-bottom: 0.5rem;">CLI — One Command to Rule Them All</h3>
+      <p style="color: var(--text-secondary); font-size: 0.88rem; margin-bottom: 1rem;">Pack, inspect, ingest, and query from the terminal.</p>
+      <pre><code class="language-bash"># Pack a CSV into a sealed .qcr file
+$ qcr pack aapl.csv --ticker AAPL --timescale 1d
+
+# Inspect metadata (reads only the Parquet footer)
+$ qcr info AAPL.qcr
+
+# Fetch live data from Yahoo Finance
+$ qcr ingest AAPL --start 2024-01-01 --end 2024-12-31
+
+# Query with SQL
+$ qcr sql "SELECT * FROM 'AAPL.qcr' WHERE close > 150" --format table</code></pre>
+      <button class="run-btn" onclick="simulateRun(this, 'cli')">&#9654; Simulate</button>
+      <div class="demo-output" id="output-cli" style="display:none;"></div>
+    </div>
+  </div>
+
+  <!-- OHLCV Chart -->
+  <div class="ohlcv-chart-section reveal">
+    <div class="chart-wrapper">
+      <div style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.5rem;">SAMPLE OHLCV DATA — AAPL (simulated)</div>
+      <div class="ohlcv-controls">
+        <button class="ohlcv-btn active" data-view="close" onclick="switchChart(this, 'close')">Close</button>
+        <button class="ohlcv-btn" data-view="volume" onclick="switchChart(this, 'volume')">Volume</button>
+        <button class="ohlcv-btn" data-view="range" onclick="switchChart(this, 'range')">High-Low Range</button>
+      </div>
+      <canvas id="ohlcvChart"></canvas>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- AUDITOR -->
+<section id="auditor">
+  <div class="reveal">
+    <div class="section-label">// The Auditor</div>
+    <div class="section-title">5 checks that guard your data</div>
+    <p class="section-desc">Click any check to see how it works under the hood. Errors block sealing. Warnings are recorded but don't block.</p>
+  </div>
+
+  <div class="audit-grid reveal">
+    <div class="audit-check error-level" onclick="toggleAuditDetail('logical')">
+      <div class="check-name">Logical Consistency</div>
+      <div class="check-desc">OHLC price relationships</div>
+      <div class="check-severity">BLOCKS SEALING</div>
+    </div>
+    <div class="audit-check error-level" onclick="toggleAuditDetail('positive')">
+      <div class="check-name">Positive Prices</div>
+      <div class="check-desc">All OHLC > 0</div>
+      <div class="check-severity">BLOCKS SEALING</div>
+    </div>
+    <div class="audit-check error-level" onclick="toggleAuditDetail('chrono')">
+      <div class="check-name">Chronological Order</div>
+      <div class="check-desc">Strictly increasing timestamps</div>
+      <div class="check-severity">BLOCKS SEALING</div>
+    </div>
+    <div class="audit-check warn-level" onclick="toggleAuditDetail('outlier')">
+      <div class="check-name">Outlier Detection</div>
+      <div class="check-desc">5σ z-score threshold</div>
+      <div class="check-severity">WARNING ONLY</div>
+    </div>
+    <div class="audit-check warn-level" onclick="toggleAuditDetail('gap')">
+      <div class="check-name">Gap Detection</div>
+      <div class="check-desc">Missing candles vs timescale</div>
+      <div class="check-severity">WARNING ONLY</div>
+    </div>
+  </div>
+
+  <div class="audit-detail" id="detail-logical">
+    <h4>Logical Consistency Check</h4>
+    <p>Validates the fundamental OHLC invariants that must hold for every candle:<br><br>
+    <code>high >= open</code> &nbsp; <code>high >= close</code> &nbsp; <code>high >= low</code><br>
+    <code>low <= open</code> &nbsp; <code>low <= close</code><br><br>
+    Uses vectorized Polars filters — checks all rows simultaneously. Any violation is an <strong style="color: var(--red)">ERROR</strong> that blocks sealing, with exact row indices reported for debugging.</p>
+  </div>
+  <div class="audit-detail" id="detail-positive">
+    <h4>Positive Price Check</h4>
+    <p>All four price columns (<code>open</code>, <code>high</code>, <code>low</code>, <code>close</code>) must be strictly greater than zero. Negative or zero prices indicate data corruption — common in vendor feeds after corporate actions or system errors.<br><br>
+    Severity: <strong style="color: var(--red)">ERROR</strong> — blocks sealing.</p>
+  </div>
+  <div class="audit-detail" id="detail-chrono">
+    <h4>Chronological Integrity Check</h4>
+    <p>Computes <code>timestamp.diff()</code> across the entire series using Polars. Any row where the diff is ≤ 0 (duplicate or backward timestamp) is flagged.<br><br>
+    This catches duplicate rows from vendor re-deliveries and timezone conversion bugs. Severity: <strong style="color: var(--red)">ERROR</strong>.</p>
+  </div>
+  <div class="audit-detail" id="detail-outlier">
+    <h4>Outlier Detection (5σ)</h4>
+    <p>Computes log close-to-close returns: <code>ln(close[i] / close[i-1])</code>. Calculates the global mean and standard deviation, then flags any return where <code>|z-score| > 5.0</code>.<br><br>
+    These may be legitimate (earnings gaps, circuit breakers) so the severity is <strong style="color: var(--amber)">WARNING</strong> — recorded in the audit trail but doesn't block sealing.</p>
+  </div>
+  <div class="audit-detail" id="detail-gap">
+    <h4>Gap Detection</h4>
+    <p>Compares consecutive timestamp diffs against the expected interval for the declared <code>Timescale</code>. For example, 1-minute data should have ~60s between candles.<br><br>
+    Tick data is skipped (no fixed interval). Monthly uses a ~30-day approximation. Severity: <strong style="color: var(--amber)">WARNING</strong>.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- COMPARISON -->
+<section id="compare">
+  <div class="reveal">
+    <div class="section-label">// Head to Head</div>
+    <div class="section-title">Traditional vs QuantCrate</div>
+    <p class="section-desc">Same data, same compression, dramatically different developer experience.</p>
+  </div>
+
+  <div class="reveal">
+    <table class="comparison-table">
+      <thead>
+        <tr>
+          <th>Feature</th>
+          <th>CSV / Parquet</th>
+          <th>QuantCrate (.qcr)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Embedded metadata</td><td class="cross">✗ None</td><td class="check">✓ Ticker, exchange, tz, timescale</td></tr>
+        <tr><td>Data quality audit</td><td class="cross">✗ Manual / none</td><td class="check">✓ Automatic (5 checks)</td></tr>
+        <tr><td>Audit trail in file</td><td class="cross">✗ No</td><td class="check">✓ Sealed with timestamp</td></tr>
+        <tr><td>Corporate actions</td><td class="cross">✗ Manual scripts</td><td class="check">✓ Stored in metadata</td></tr>
+        <tr><td>Split/dividend adjust</td><td class="cross">✗ Destructive or manual</td><td class="check">✓ Non-destructive, on-the-fly</td></tr>
+        <tr><td>Instant metadata peek</td><td class="cross">✗ Must load full file</td><td class="check">✓ Footer-only read</td></tr>
+        <tr><td>SQL queries</td><td class="cross">✗ Load into DB first</td><td class="check">✓ Direct SQL via DuckDB</td></tr>
+        <tr><td>CLI tooling</td><td class="cross">✗ Write your own</td><td class="check">✓ qcr pack/info/ingest/sql</td></tr>
+        <tr><td>File size</td><td class="same">~Same</td><td class="same">~Same (ZSTD)</td></tr>
+        <tr><td>Read speed</td><td class="same">~Same</td><td class="same">~Same (memory-mapped)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="chart-wrapper reveal" style="margin-top: 2rem;">
+    <div style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); margin-bottom: 1rem;">FEATURE COVERAGE COMPARISON</div>
+    <canvas id="radarChart"></canvas>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- TECH STACK -->
+<section id="tech">
+  <div class="reveal">
+    <div class="section-label">// Tech Stack</div>
+    <div class="section-title">Built on proven foundations</div>
+    <p class="section-desc">Every dependency was chosen for a specific reason — no bloat, no guesswork.</p>
+  </div>
+
+  <div class="tech-grid reveal">
+    <div class="tech-item">
+      <div class="tech-name">PyArrow</div>
+      <div class="tech-role">Arrow/Parquet I/O, schema metadata, ZSTD compression</div>
+    </div>
+    <div class="tech-item">
+      <div class="tech-name">Polars</div>
+      <div class="tech-role">Vectorized DataFrame ops, audit checks, adjustments</div>
+    </div>
+    <div class="tech-item">
+      <div class="tech-name">Pydantic</div>
+      <div class="tech-role">Metadata validation — types, enums, constraints</div>
+    </div>
+    <div class="tech-item">
+      <div class="tech-name">DuckDB</div>
+      <div class="tech-role">In-process SQL engine, native Parquet reader</div>
+    </div>
+    <div class="tech-item">
+      <div class="tech-name">Typer + Rich</div>
+      <div class="tech-role">CLI framework with beautiful terminal output</div>
+    </div>
+    <div class="tech-item">
+      <div class="tech-name">yfinance</div>
+      <div class="tech-role">Live OHLCV adapter for Yahoo Finance</div>
+    </div>
+  </div>
+
+  <div class="reveal" style="margin-top: 3rem;">
+    <div class="section-label">// Project Structure</div>
+    <div class="structure-box">
+      <span style="color: var(--accent);">qcr/</span><br>
+      &nbsp;&nbsp;<span style="color: var(--text-muted);">├──</span> <span style="color: var(--green);">schema.py</span> <span style="color: var(--text-muted); font-size: 0.72rem;">&nbsp; Pydantic models, enums, Arrow PAYLOAD_SCHEMA</span><br>
+      &nbsp;&nbsp;<span style="color: var(--text-muted);">├──</span> <span style="color: var(--green);">storage.py</span> <span style="color: var(--text-muted); font-size: 0.72rem;">&nbsp;save_qcr / load_qcr / encoding engine</span><br>
+      &nbsp;&nbsp;<span style="color: var(--text-muted);">├──</span> <span style="color: var(--green);">auditor.py</span> <span style="color: var(--text-muted); font-size: 0.72rem;">&nbsp;5 quality checks + run_audit()</span><br>
+      &nbsp;&nbsp;<span style="color: var(--text-muted);">├──</span> <span style="color: var(--green);">adjust.py</span> <span style="color: var(--text-muted); font-size: 0.72rem;">&nbsp; split &amp; dividend adjustments</span><br>
+      &nbsp;&nbsp;<span style="color: var(--text-muted);">├──</span> <span style="color: var(--green);">adapters.py</span> <span style="color: var(--text-muted); font-size: 0.72rem;">&nbsp;BaseAdapter + YahooFinanceAdapter</span><br>
+      &nbsp;&nbsp;<span style="color: var(--text-muted);">├──</span> <span style="color: var(--green);">ingest.py</span> <span style="color: var(--text-muted); font-size: 0.72rem;">&nbsp; async fetch → audit → seal pipeline</span><br>
+      &nbsp;&nbsp;<span style="color: var(--text-muted);">├──</span> <span style="color: var(--green);">vtable.py</span> <span style="color: var(--text-muted); font-size: 0.72rem;">&nbsp; DuckDB SQL engine for .qcr files</span><br>
+      &nbsp;&nbsp;<span style="color: var(--text-muted);">└──</span> <span style="color: var(--green);">cli.py</span> <span style="color: var(--text-muted); font-size: 0.72rem;">&nbsp;&nbsp;&nbsp;&nbsp; Typer CLI (pack, info, ingest, sql)</span><br>
+      <span style="color: var(--amber);">tests/</span> <span style="color: var(--text-muted); font-size: 0.72rem;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 8 modules, 146 tests</span><br>
+      <span style="color: var(--text-secondary);">demo.py</span> <span style="color: var(--text-muted); font-size: 0.72rem;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; End-to-end interactive walkthrough</span>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<div class="footer">
+  <p style="font-family: var(--font-mono); font-size: 0.9rem; color: var(--accent); margin-bottom: 0.5rem;">QuantCrate</p>
+  <p>The SQLite of Quant Finance — built for quantitative researchers, data scientists, and financial engineers.</p>
+  <p style="margin-top: 1rem;">Python 3.10+ &middot; MIT License &middot; <a href="https://github.com">GitHub</a></p>
+</div>
+
+<script>
+// ─── TABS ───
+document.querySelectorAll('.demo-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.demo-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.demo-panel').forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('panel-' + tab.dataset.tab).classList.add('active');
+  });
+});
+
+// ─── SIMULATE OUTPUTS ───
+const outputs = {
+  seal: `✓ Metadata validated (Pydantic)
+  ticker: AAPL | asset_class: Equity | exchange: XNAS
+  timescale: 1d | currency: USD | timezone: America/New_York
+
+✓ Audit PASSED
+  logical_consistency: OK
+  positive_prices: OK
+  chronological_order: OK
+  outlier_detection: 0 flagged
+  gap_detection: 0 gaps
+
+✓ Sealed → AAPL.qcr (12,847 bytes)
+  Compression: ZSTD level 9
+  Encoding: DELTA_BINARY_PACKED (timestamp, volume)
+           BYTE_STREAM_SPLIT (open, high, low, close)
+  Page index: enabled | Page size: 64KB
+  Sorted by: timestamp ASC`,
+
+  audit: `Running audit on 500-row DataFrame...
+
+✗ [ERROR] positive_price: close <= 0 in 1 rows
+    → Row 100: close = -5.00 (negative price)
+
+✗ [ERROR] chronology: Timestamps not strictly increasing at 1 positions
+    → Row 50: duplicate of row 49
+
+✗ [ERROR] logical_consistency: high < low in 1 rows
+    → Row 200: high = 1.00, low = 148.32
+
+⚠ [WARNING] outlier_detection: 2 candles exceed 5σ threshold
+    → Rows [100, 200] — likely caused by injected errors
+
+Audit FAILED — 3 errors block sealing.
+Traditional Parquet would happily store every one of these.`,
+
+  adjust: `Applying corporate actions to 500-row OHLCV...
+
+Action: 4-for-1 forward split (2022-08-31)
+  → Pre-split rows: prices / 4, volume × 4
+  → Post-split rows: unchanged
+
+Row 0 (pre-split):
+  Raw:      close = 150.23   volume =   245,000
+  Adjusted: close =  37.56   volume =   980,000
+
+Row 400 (post-split):
+  Raw:      close = 178.45   volume =   312,000
+  Adjusted: close = 178.45   volume =   312,000  (unchanged ✓)
+
+✓ Returns NEW DataFrame — original data untouched.
+✓ Corporate actions stored in .qcr metadata for reproducibility.`,
+
+  sql: `Executing SQL via DuckDB (in-process, no server)...
+
+SELECT timestamp, close, volume
+FROM read_parquet('AAPL.qcr')
+WHERE close > 150 AND volume > 1000000
+ORDER BY volume DESC LIMIT 5
+
+timestamp                  | close  | volume
+───────────────────────────+────────+──────────
+2024-03-15 14:30:00+00:00  | 172.34 | 2,451,000
+2024-02-28 15:00:00+00:00  | 168.91 | 1,987,000
+2024-01-19 13:45:00+00:00  | 155.67 | 1,543,000
+2024-04-02 10:15:00+00:00  | 181.22 | 1,321,000
+2024-03-08 11:00:00+00:00  | 163.45 | 1,102,000
+
+(5 rows) — Query time: 2.3ms
+
+✓ No database server. No loading into memory.
+  DuckDB reads the Parquet file directly with predicate pushdown.`,
+
+  cli: `$ qcr pack aapl.csv --ticker AAPL --timescale 1d --output AAPL.qcr
+
+  Reading aapl.csv... 500 rows
+  Mapping columns: Date→timestamp, Open→open, High→high, Low→low, Close→close, Vol→volume
+  Running audit... ✓ PASSED (0 errors, 0 warnings)
+  Sealing... ✓ AAPL.qcr (12,847 bytes)
+
+$ qcr info AAPL.qcr
+
+  ┌─────────────────┬──────────────────┐
+  │ Field           │ Value            │
+  ├─────────────────┼──────────────────┤
+  │ ticker          │ AAPL             │
+  │ asset_class     │ Equity           │
+  │ currency        │ USD              │
+  │ exchange        │ XNAS             │
+  │ timezone        │ America/New_York │
+  │ timescale       │ 1d               │
+  │ audit_passed    │ ✓ True           │
+  │ data_gaps       │ 0                │
+  │ outliers_found  │ 0                │
+  └─────────────────┴──────────────────┘`
+};
+
+function simulateRun(btn, key) {
+  btn.classList.add('running');
+  btn.innerHTML = '&#9654; Running...';
+  const output = document.getElementById('output-' + key);
+  output.style.display = 'block';
+  output.textContent = '';
+
+  const text = outputs[key];
+  let i = 0;
+  const speed = 6;
+
+  function typeChar() {
+    if (i < text.length) {
+      output.textContent += text[i];
+      i++;
+      output.scrollTop = output.scrollHeight;
+      setTimeout(typeChar, text[i-1] === '\n' ? speed * 10 : speed);
+    } else {
+      btn.classList.remove('running');
+      btn.innerHTML = '&#9654; Run Again';
+      if (key === 'adjust') showAdjustVisual();
+    }
+  }
+  typeChar();
+}
+
+function showAdjustVisual() {
+  const visual = document.getElementById('adjust-visual');
+  visual.style.display = 'grid';
+
+  const rawData = [
+    { ts: '2022-08-29', close: 150.23, vol: '245,000' },
+    { ts: '2022-08-30', close: 152.10, vol: '198,000' },
+    { ts: '2022-08-31', close: 155.74, vol: '312,000' },
+    { ts: '2022-09-01', close: 38.50, vol: '1,240,000' },
+    { ts: '2022-09-02', close: 39.12, vol: '987,000' },
+  ];
+
+  const adjData = [
+    { ts: '2022-08-29', close: '37.56', vol: '980,000', changed: true },
+    { ts: '2022-08-30', close: '38.03', vol: '792,000', changed: true },
+    { ts: '2022-08-31', close: '38.94', vol: '1,248,000', changed: true },
+    { ts: '2022-09-01', close: '38.50', vol: '1,240,000', changed: false },
+    { ts: '2022-09-02', close: '39.12', vol: '987,000', changed: false },
+  ];
+
+  const rawEl = document.getElementById('raw-rows');
+  const adjEl = document.getElementById('adjusted-rows');
+  rawEl.innerHTML = '';
+  adjEl.innerHTML = '';
+
+  rawData.forEach((r, i) => {
+    setTimeout(() => {
+      rawEl.innerHTML += `<div class="adjust-row"><span class="ts">${r.ts}</span><span class="val">$${r.close} | ${r.vol}</span></div>`;
+      const a = adjData[i];
+      adjEl.innerHTML += `<div class="adjust-row${a.changed ? ' changed' : ''}"><span class="ts">${a.ts}</span><span class="val">$${a.close} | ${a.vol}</span></div>`;
+    }, i * 200);
+  });
+}
+
+// ─── AUDITOR DETAIL TOGGLE ───
+function toggleAuditDetail(id) {
+  const detail = document.getElementById('detail-' + id);
+  const wasVisible = detail.classList.contains('visible');
+  document.querySelectorAll('.audit-detail').forEach(d => d.classList.remove('visible'));
+  if (!wasVisible) {
+    detail.classList.add('visible');
+    detail.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+}
+
+// ─── SCROLL REVEAL ───
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) entry.target.classList.add('visible');
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// ─── NAV SCROLL ───
+window.addEventListener('scroll', () => {
+  document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 50);
+});
+
+// ─── COUNTER ANIMATION ───
+function animateCounters() {
+  document.querySelectorAll('.hero-stat .number').forEach(el => {
+    const target = parseInt(el.dataset.target);
+    if (target === 0) { el.textContent = '0'; return; }
+    let current = 0;
+    const step = Math.max(1, Math.floor(target / 40));
+    const timer = setInterval(() => {
+      current += step;
+      if (current >= target) { current = target; clearInterval(timer); }
+      el.textContent = current;
+    }, 30);
+  });
+}
+setTimeout(animateCounters, 1200);
+
+// ─── GENERATE SAMPLE DATA ───
+function generateOHLCV(count) {
+  const data = [];
+  let price = 150;
+  const baseDate = new Date('2024-01-02T09:30:00Z');
+
+  for (let i = 0; i < count; i++) {
+    const ts = new Date(baseDate.getTime() + i * 60000);
+    const change = (Math.random() - 0.5) * 3;
+    const open = price + change;
+    const high = open + Math.random() * 2;
+    const low = open - Math.random() * 2;
+    const close = low + Math.random() * (high - low);
+    const volume = 50000 + Math.floor(Math.random() * 450000);
+    data.push({ ts, open, high, low, close, volume });
+    price = close;
+  }
+  return data;
+}
+
+const sampleData = generateOHLCV(100);
+let ohlcvChart = null;
+
+function createOHLCVChart(view) {
+  const ctx = document.getElementById('ohlcvChart').getContext('2d');
+  if (ohlcvChart) ohlcvChart.destroy();
+
+  const labels = sampleData.map(d => d.ts.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }));
+
+  let config;
+  if (view === 'close') {
+    config = {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [{
+          label: 'Close Price',
+          data: sampleData.map(d => d.close.toFixed(2)),
+          borderColor: '#22d3ee',
+          backgroundColor: 'rgba(34, 211, 238, 0.05)',
+          borderWidth: 1.5,
+          pointRadius: 0,
+          fill: true,
+          tension: 0.3,
+        }]
+      }
+    };
+  } else if (view === 'volume') {
+    config = {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [{
+          label: 'Volume',
+          data: sampleData.map(d => d.volume),
+          backgroundColor: sampleData.map(d =>
+            d.close >= d.open ? 'rgba(52, 211, 153, 0.6)' : 'rgba(248, 113, 113, 0.6)'
+          ),
+          borderWidth: 0,
+        }]
+      }
+    };
+  } else {
+    config = {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [
+          {
+            label: 'Low',
+            data: sampleData.map(d => d.low.toFixed(2)),
+            backgroundColor: 'transparent',
+            borderWidth: 0,
+          },
+          {
+            label: 'High-Low Range',
+            data: sampleData.map(d => (d.high - d.low).toFixed(2)),
+            backgroundColor: 'rgba(251, 191, 36, 0.5)',
+            borderWidth: 0,
+          }
+        ]
+      },
+      options: { scales: { x: { stacked: true }, y: { stacked: true } } }
+    };
+  }
+
+  config.options = {
+    ...config.options,
+    responsive: true,
+    maintainAspectRatio: true,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: '#151d2e',
+        borderColor: '#1e293b',
+        borderWidth: 1,
+        titleFont: { family: 'JetBrains Mono', size: 11 },
+        bodyFont: { family: 'Outfit', size: 12 },
+        titleColor: '#94a3b8',
+        bodyColor: '#f1f5f9',
+      }
+    },
+    scales: {
+      ...config.options?.scales,
+      x: {
+        ...config.options?.scales?.x,
+        ticks: { color: '#64748b', font: { family: 'JetBrains Mono', size: 9 }, maxTicksLimit: 10 },
+        grid: { color: 'rgba(30, 41, 59, 0.5)' },
+      },
+      y: {
+        ...config.options?.scales?.y,
+        ticks: { color: '#64748b', font: { family: 'JetBrains Mono', size: 10 } },
+        grid: { color: 'rgba(30, 41, 59, 0.5)' },
+      }
+    }
+  };
+
+  ohlcvChart = new Chart(ctx, config);
+}
+
+function switchChart(btn, view) {
+  document.querySelectorAll('.ohlcv-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  createOHLCVChart(view);
+}
+
+// ─── RADAR CHART ───
+function initRadarChart() {
+  const ctx = document.getElementById('radarChart').getContext('2d');
+  new Chart(ctx, {
+    type: 'radar',
+    data: {
+      labels: ['Metadata', 'Audit', 'Corporate Actions', 'SQL Access', 'CLI Tools', 'Compression', 'Read Speed', 'Portability'],
+      datasets: [
+        {
+          label: 'CSV / Parquet',
+          data: [1, 1, 1, 2, 1, 8, 9, 7],
+          borderColor: '#f87171',
+          backgroundColor: 'rgba(248, 113, 113, 0.08)',
+          borderWidth: 2,
+          pointBackgroundColor: '#f87171',
+          pointRadius: 4,
+        },
+        {
+          label: 'QuantCrate (.qcr)',
+          data: [10, 10, 9, 9, 9, 8, 9, 10],
+          borderColor: '#22d3ee',
+          backgroundColor: 'rgba(34, 211, 238, 0.08)',
+          borderWidth: 2,
+          pointBackgroundColor: '#22d3ee',
+          pointRadius: 4,
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: true,
+      plugins: {
+        legend: {
+          labels: {
+            color: '#94a3b8',
+            font: { family: 'Outfit', size: 12 },
+            padding: 20,
+          }
+        }
+      },
+      scales: {
+        r: {
+          beginAtZero: true,
+          max: 10,
+          ticks: { display: false, stepSize: 2 },
+          grid: { color: 'rgba(30, 41, 59, 0.8)' },
+          angleLines: { color: 'rgba(30, 41, 59, 0.8)' },
+          pointLabels: {
+            color: '#94a3b8',
+            font: { family: 'JetBrains Mono', size: 10 },
+          }
+        }
+      }
+    }
+  });
+}
+
+// ─── INIT ───
+document.addEventListener('DOMContentLoaded', () => {
+  initRadarChart();
+  createOHLCVChart('close');
+  if (typeof Prism !== 'undefined') Prism.highlightAll();
+});
+</script>
+</body>
+</html>

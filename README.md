@@ -1,4 +1,4 @@
-# 🚀 QuantCrate (.qcr)
+# QuantCrate (.qcr)
 
 **The SQLite of Quant Finance** — A zero-config, portable, high-performance binary container for financial time-series data.
 
@@ -21,10 +21,10 @@ All in a single, compressed, memory-mapped binary file.
 ### The Problem
 
 Traditional workflows with CSV/Parquet:
-- ❌ No standardized metadata — every vendor uses different column names
-- ❌ No data quality guarantees — backtests fail on "ghost" spikes or gaps
-- ❌ No audit trail — you don't know if data has been validated
-- ❌ No SQL access — must load into a database or DataFrame first
+- No standardized metadata — every vendor uses different column names
+- No data quality guarantees — backtests fail on "ghost" spikes or gaps
+- No audit trail — you don't know if data has been validated
+- No SQL access — must load into a database or DataFrame first
 
 ### The QuantCrate Solution
 
@@ -51,14 +51,14 @@ result = query_qcr("SELECT * FROM 'AAPL.qcr' WHERE volume > 1000000")
 
 | Feature | Traditional (CSV/Parquet) | QuantCrate (.qcr) |
 |:--------|:--------------------------|:------------------|
-| Embedded metadata | ❌ None | ✅ Ticker, exchange, timezone, etc. |
-| Data quality audit | ❌ Manual | ✅ Automatic (5 checks) |
-| Audit trail | ❌ No | ✅ Sealed with timestamp |
-| Corporate actions | ❌ Manual scripts | ✅ Stored in metadata |
-| Split/dividend adjustments | ❌ Destructive | ✅ Non-destructive, on-the-fly |
-| Instant metadata peek | ❌ Must load full file | ✅ Footer-only read |
-| SQL queries | ❌ Load into DB first | ✅ Direct SQL via DuckDB |
-| CLI tooling | ❌ Write your own | ✅ `qcr pack/info/ingest/sql` |
+| Embedded metadata | None | Ticker, exchange, timezone, etc. |
+| Data quality audit | Manual | Automatic (5 checks) |
+| Audit trail | No | Sealed with timestamp |
+| Corporate actions | Manual scripts | Stored in metadata |
+| Split/dividend adjustments | Destructive | Non-destructive, on-the-fly |
+| Instant metadata peek | Must load full file | Footer-only read |
+| SQL queries | Load into DB first | Direct SQL via DuckDB |
+| CLI tooling | Write your own | `qcr pack/info/ingest/sql` |
 | File size | ~Same | ~Same (ZSTD compressed) |
 | Read speed | ~Same | ~Same (memory-mapped) |
 
@@ -268,21 +268,6 @@ A `.qcr` file is a ZSTD-compressed Parquet file built on **Apache Arrow**:
 
 ---
 
-## Development Roadmap
-
-- [x] **Phase 1:** Storage Engine (`storage.py`) — 14 tests ✅
-- [x] **Phase 2:** Financial Auditor (`auditor.py`) — 26 tests ✅
-- [x] **Phase 3:** CLI & Packaging (`cli.py`) — 14 tests ✅
-- [x] **Phase 4:** Dynamic Adjustments (`adjust.py`) — 26 tests ✅
-- [x] **Phase 5:** Data Adapters (`adapters.py`, `ingest.py`) — 26 tests ✅
-- [x] **Phase 6:** Virtual Table Interface (`vtable.py`) — 40 tests ✅
-- [ ] **Phase 7:** Real-time streaming adapters (WebSocket-based)
-- [ ] **Phase 8:** Advanced analytics (technical indicators, backtesting)
-
-**Total: 146/146 tests passing**
-
----
-
 ## Demo
 
 Run the comprehensive demo to see all features in action:
@@ -316,20 +301,27 @@ qcr/
 │   ├── ingest.py         # Async fetch → audit → seal pipeline
 │   ├── vtable.py         # DuckDB-powered SQL engine for .qcr files
 │   └── cli.py            # CLI entry point (typer)
-├── tests/
-│   ├── test_storage.py   # 14 tests ✅
-│   ├── test_auditor.py   # 26 tests ✅
-│   ├── test_cli.py       # 14 tests ✅
-│   ├── test_adjust.py    # 26 tests ✅
-│   ├── test_adapters.py  # 26 tests ✅
-│   └── test_vtable.py    # 40 tests ✅
+├── tests/                # 146 tests across 8 modules
+├── portfolio/            # Interactive web showcase (open index.html)
 ├── pyproject.toml        # hatchling build, deps, pytest config
 ├── demo.py               # Interactive demo script
-├── PLAN.md               # Project vision & specification
-├── ROADMAP.md            # Development phases & tasks
-├── SCHEMA_SPEC.md        # Metadata & payload schema spec
 └── README.md             # This file
 ```
+
+---
+
+## Portfolio Showcase
+
+An interactive web-based showcase of QuantCrate is included in the `portfolio/` directory. Open `portfolio/index.html` in any browser to explore:
+
+- **Architecture walkthrough** — data pipeline flow and file anatomy
+- **Interactive demos** — simulated terminal output for sealing, auditing, adjustments, SQL queries, and CLI commands
+- **Auditor deep dive** — click any of the 5 checks to see how it works under the hood
+- **OHLCV chart** — toggle between close price, volume, and high-low range views
+- **Feature comparison** — side-by-side table and radar chart vs traditional CSV/Parquet
+- **Encoding strategy** — why each column uses a specific Parquet encoding
+
+No build step or dependencies required — it's a single self-contained HTML file.
 
 ---
 

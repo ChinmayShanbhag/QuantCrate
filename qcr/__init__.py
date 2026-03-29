@@ -1,6 +1,6 @@
 """QuantCrate — a smart binary container for financial time-series data."""
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 
 # Core storage functions
 from qcr.storage import (

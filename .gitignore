@@ -55,6 +55,7 @@ _demo_workspace/
 
 # Distribution / packaging
 *.whl
+setup.cfg
 
 # MyPy
 .mypy_cache/
@@ -63,6 +64,12 @@ dmypy.json
 
 # Ruff
 .ruff_cache/
+
+# Environment / secrets
+.env
+.env.*
+*.pem
+*.key
 
 # Miscellaneous
 ROADMAP.md
